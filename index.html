@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Self Evaluation Form</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #000000;
+    --gold: #000000;
+    --gold-light: #f2f2f2;
+    --cream: #fafafa;
+    --white: #ffffff;
+    --gray-100: #ececec;
+    --gray-200: #d4d4d4;
+    --gray-500: #6b6b6b;
+    --gray-700: #2a2a2a;
+    --green: #000000;
+    --red: #000000;
+    --shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+
+  body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--navy); min-height: 100vh; }
+
+  .site-header {
+    background: var(--navy); color: var(--white);
+    padding: 18px 32px; display: flex; align-items: center; gap: 16px;
+    border-bottom: 3px solid var(--gold);
+  }
+  .site-header .logo { font-family: 'Inter', sans-serif; font-size: 1.35rem; }
+  .site-header .tagline { font-size: 0.78rem; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; margin-left: auto; }
+
+  .progress-wrapper {
+    background: var(--white); border-bottom: 1px solid var(--gray-200);
+    padding: 14px 32px; position: sticky; top: 0; z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .progress-labels { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .progress-step {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--gray-500);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .progress-step .dot {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--gray-200);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; color: var(--gray-500);
+    flex-shrink: 0; transition: background 0.3s, color 0.3s;
+  }
+  .progress-step.active .dot { background: var(--gold); color: var(--white); }
+  .progress-step.done .dot { background: var(--green); color: var(--white); }
+  .progress-step.active { color: var(--navy); }
+  .progress-step.done { color: var(--green); }
+  .progress-bar-track { height: 4px; background: var(--gray-200); border-radius: 2px; }
+  .progress-bar-fill { height: 4px; background: var(--gold); border-radius: 2px; transition: width 0.4s ease; width: 0%; }
+
+  .container { max-width: 780px; margin: 40px auto 60px; padding: 0 20px; }
+
+  .card { background: var(--white); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px; }
+  .card-header { background: var(--navy); color: var(--white); padding: 22px 32px; }
+  .card-header .role-badge {
+    display: inline-block; background: var(--white); color: var(--navy);
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 4px; margin-bottom: 8px;
+  }
+  .card-header .role-title { font-family: 'Inter', sans-serif; font-size: 1.25rem; }
+  .card-header .role-subtitle { font-size: 0.82rem; color: var(--gold-light); margin-top: 4px; }
+  .card-body { padding: 28px 32px; }
+
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+  @media (max-width: 560px) { .info-grid { grid-template-columns: 1fr; } }
+
+  label {
+    display: block; font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.03em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 6px;
+  }
+  input[type="text"], input[type="date"], textarea, select {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--gray-200);
+    border-radius: 7px; font-family: 'Inter', sans-serif; font-size: 0.92rem;
+    color: var(--navy); background: var(--cream); outline: none; transition: border 0.2s;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--gold); background: var(--white); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .section-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); border-bottom: 1.5px solid var(--gold-light);
+    padding-bottom: 6px; margin: 28px 0 18px;
+  }
+
+  .rating-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .rating-table thead th {
+    background: var(--navy); color: var(--white); padding: 10px 14px;
+    text-align: center; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .rating-table thead th:first-child { text-align: left; border-radius: 6px 0 0 0; }
+  .rating-table thead th:last-child { border-radius: 0 6px 0 0; }
+  .rating-table tbody tr { border-bottom: 1px solid var(--gray-100); transition: background 0.15s; }
+  .rating-table tbody tr:hover { background: var(--cream); }
+  .rating-table tbody td { padding: 12px 14px; vertical-align: middle; color: var(--gray-700); }
+  .rating-table tbody td:first-child { font-size: 0.87rem; line-height: 1.5; }
+  .rating-table tbody td.num-col { text-align: center; }
+
+  .radio-group { display: flex; justify-content: center; gap: 4px; }
+  .radio-group input[type="radio"] { display: none; }
+  .radio-group label {
+    width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--gray-200);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 0.78rem; font-weight: 600; color: var(--gray-500);
+    margin: 0; text-transform: none; letter-spacing: 0; transition: all 0.18s;
+  }
+  .radio-group input[type="radio"]:checked + label { background: var(--gold); border-color: var(--gold); color: var(--white); font-weight: 700; }
+  .radio-group label:hover { border-color: var(--gold); color: var(--navy); }
+
+  .legend {
+    display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.75rem; color: var(--gray-500);
+    margin-bottom: 16px; padding: 10px 14px; background: var(--cream);
+    border-radius: 7px; border: 1px solid var(--gray-100);
+  }
+  .legend span { font-weight: 600; color: var(--navy); }
+
+  .btn-row { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; }
+  .btn {
+    padding: 11px 28px; border-radius: 7px; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; border: none; font-family: 'Inter', sans-serif; transition: all 0.2s;
+  }
+  .btn-primary { background: var(--navy); color: var(--white); }
+  .btn-primary:hover { background: #253460; }
+  .btn-secondary { background: var(--white); color: var(--navy); border: 1.5px solid var(--gray-200); }
+  .btn-secondary:hover { border-color: var(--navy); }
+  .btn-gold { background: var(--gold); color: var(--white); }
+  .btn-gold:hover { background: #b8922e; }
+
+  .success-screen { text-align: center; padding: 60px 32px; }
+  .success-icon {
+    width: 72px; height: 72px; background: var(--green); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; font-size: 2rem; color: var(--white);
+  }
+  .success-screen h2 { font-family: 'Inter', sans-serif; font-size: 1.6rem; color: var(--navy); margin-bottom: 10px; }
+  .success-screen p { color: var(--gray-500); font-size: 0.92rem; line-height: 1.6; }
+
+  .step { display: none; }
+  .step.active { display: block; }
+
+  .intro-card { background: var(--white); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+  .intro-hero {
+    background: var(--navy); padding: 40px 32px 32px; color: var(--white);
+    text-align: center; border-bottom: 3px solid var(--gold);
+  }
+  .intro-hero h1 { font-family: 'Inter', sans-serif; font-size: 1.8rem; margin-bottom: 8px; }
+  .intro-hero p { color: var(--gold-light); font-size: 0.9rem; line-height: 1.6; }
+  .intro-body { padding: 32px; }
+
+  .instruction-list li {
+    padding: 10px 0; border-bottom: 1px solid var(--gray-100); font-size: 0.9rem;
+    color: var(--gray-700); line-height: 1.6; list-style: none;
+    padding-left: 20px; position: relative;
+  }
+  .instruction-list li::before { content: '▸'; color: var(--gold); position: absolute; left: 0; }
+  .instruction-list li:last-child { border-bottom: none; }
+
+  .error-msg { color: var(--red); font-size: 0.8rem; margin-top: 4px; display: none; }
+  .field-error input, .field-error select { border-color: var(--red) !important; }
+  .field-error .error-msg { display: block; }
+  .notif-banner {
+    background: var(--gray-100); border: 1px solid var(--navy); border-left: 4px solid var(--navy);
+    color: var(--navy); padding: 12px 16px; border-radius: 6px; font-size: 0.9rem;
+    margin-bottom: 18px; font-weight: 600;
+  }
+  .rating-table tbody tr.row-unanswered { background: var(--gray-100); }
+  .rating-table tbody tr.row-unanswered td:first-child { color: var(--navy); font-weight: 700; }
+
+  .evaluatee-banner {
+    background: var(--gold-light); border: 1.5px solid var(--gold);
+    border-radius: 8px; padding: 14px 18px; margin-bottom: 24px;
+    font-size: 0.88rem; color: var(--navy);
+  }
+  .evaluatee-banner strong { font-size: 1rem; }
+
+  @media (max-width: 560px) {
+    .card-body { padding: 20px 16px; }
+    .card-header { padding: 18px 16px; }
+    .intro-body { padding: 20px 16px; }
+    .rating-table { font-size: 0.8rem; table-layout: fixed; width: 100%; }
+    .rating-table thead { display: none; }
+    .rating-table tbody tr { display: flex; flex-wrap: wrap; padding: 12px 0; }
+    .rating-table tbody td { padding: 0; display: block; }
+    .rating-table tbody td:first-child {
+      flex: 0 0 100%; max-width: 100%; padding-bottom: 10px; font-weight: 600;
+    }
+    .rating-table tbody td.num-col { flex: 1 1 0; max-width: none; }
+    .radio-group { gap: 2px; }
+    .radio-group label { width: 30px; height: 30px; font-size: 0.74rem; }
+    .btn-row { flex-direction: column; }
+    .btn { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">Self Evaluation</div>
+  <div class="tagline">Opisyal na Pagtatasa sa Sarili</div>
+</header>
+
+<div class="progress-wrapper">
+  <div class="progress-labels">
+    <div class="progress-step active" id="ps-1"><div class="dot">1</div> Impormasyon</div>
+    <div class="progress-step" id="ps-2"><div class="dot">2</div> Pagtatasa</div>
+    <div class="progress-step" id="ps-3"><div class="dot">✓</div> Tapos Na</div>
+  </div>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progressBar"></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- STEP 0: INTRO + EVALUATOR INFO -->
+  <div class="step active" id="step-0">
+    <div class="intro-card">
+      <div class="intro-hero">
+        <h1>Self Evaluation Form</h1>
+        <p>Isang mahalagang bahagi ng aming proseso ng pagpapabuti ng organisasyon.<br>Ang inyong mga sagot ay magiging kompidensiyal.</p>
+      </div>
+      <div class="intro-body">
+        <div class="section-label">Mga Panuto</div>
+        <ul class="instruction-list">
+          <li>Basahin nang maingat ang bawat pahayag bago sagutin.</li>
+          <li>Markahan ang sarili, simula sa unang numero hanggang sa huling numero.</li>
+          <li>Gamitin ang sumusunod na sukat: <strong>5 = Napakahusay / Excellent &nbsp;·&nbsp; 4 = Magaling / Good &nbsp;·&nbsp; 3 = Katamtaman / Average &nbsp;·&nbsp; 2 = Ayos lang / Okay &nbsp;·&nbsp; 1 = Mahina / Poor</strong></li>
+          <li>Sagutin ang bawat pahayag nang tapat at may pag-iisip.</li>
+          <li>Lahat ng sagot ay kompidensiyal at gagamitin lamang para sa pagpapabuti ng organisasyon.</li>
+        </ul>
+
+        <div class="section-label" style="margin-top:28px;">Impormasyon</div>
+        <div class="info-grid">
+          <div id="f-name">
+            <label for="emp-name">Iyong Pangalan</label>
+            <input type="text" id="emp-name" placeholder="Juan dela Cruz">
+            <div class="error-msg">Kinakailangan ang iyong pangalan.</div>
+          </div>
+          <div id="f-dept">
+            <label for="emp-dept">Department / Location</label>
+            <select id="emp-dept">
+              <option value="" disabled selected>Pumili ng Department / Location</option>
+              <option value="Choi Garden Gateway">Choi Garden Gateway</option>
+              <option value="Choi Garden Rockwell">Choi Garden Rockwell</option>
+              <option value="Fei Fei BGC">Fei Fei BGC</option>
+              <option value="Fei Fei WP">Fei Fei WP</option>
+              <option value="Ocean Empire">Ocean Empire</option>
+              <option value="Choi Garden Mitsukoshi 2F">Choi Garden Mitsukoshi 2F</option>
+              <option value="Choi Garden Mitsukoshi Express">Choi Garden Mitsukoshi Express</option>
+              <option value="Choi Garden Mitsukoshi Dimsum">Choi Garden Mitsukoshi Dimsum</option>
+            </select>
+            <div class="error-msg">Kinakailangan ang departamento.</div>
+          </div>
+          <div id="f-position">
+            <label for="emp-pos">Iyong Posisyon</label>
+            <input type="text" id="emp-pos" placeholder="Hal. Associate, Specialist">
+            <div class="error-msg">Kinakailangan ang posisyon.</div>
+          </div>
+          <div id="f-date">
+            <label for="eval-date">Petsa ng Evaluation</label>
+            <input type="date" id="eval-date">
+            <div class="error-msg">Kinakailangan ang petsa.</div>
+          </div>
+        </div>
+
+        <div id="notif-step0" class="notif-banner" style="display:none;"></div>
+        <div class="btn-row">
+          <button class="btn btn-gold" onclick="startEval()">Magsimula →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1: EVALUATION -->
+  <div class="step" id="step-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="role-badge" id="eval-badge">Pagtatasa</div>
+        <div class="role-title" id="eval-card-title">Self Evaluation</div>
+        <div class="role-subtitle" id="eval-card-subtitle"></div>
+      </div>
+      <div class="card-body">
+
+        <div class="evaluatee-banner" id="evaluatee-banner"></div>
+
+        <div id="notif-step1" class="notif-banner" style="display:none;"></div>
+
+        <div class="legend">
+          <div><span>5</span> – Napakahusay / Excellent</div>
+          <div><span>4</span> – Magaling / Good</div>
+          <div><span>3</span> – Katamtaman / Average</div>
+          <div><span>2</span> – Ayos lang / Okay</div>
+          <div><span>1</span> – Mahina / Poor</div>
+        </div>
+
+        <div class="section-label">Pagtatasa</div>
+        <table class="rating-table">
+          <thead><tr>
+            <th style="width:58%">Pahayag</th>
+            <th class="num-col">1</th><th class="num-col">2</th><th class="num-col">3</th><th class="num-col">4</th><th class="num-col">5</th>
+          </tr></thead>
+          <tbody id="sec-a"></tbody>
+        </table>
+
+        <div class="section-label">KOMENTO</div>
+        <label for="eval-comments" id="eval-comments-label">Komento:</label>
+        <textarea id="eval-comments" placeholder="Isulat ang iyong mga komento dito..."></textarea>
+
+        <div class="section-label" style="margin-top:20px;">Karagdagang Tanong</div>
+        <label for="eval-best-fit" id="eval-best-fit-label">Sa anong uri ng trabaho ikaw ay higit na magaling at mahusay (ipaliwanag)?</label>
+        <textarea id="eval-best-fit" placeholder="Isulat ang iyong sagot dito..."></textarea>
+
+        <label for="eval-improve" id="eval-improve-label" style="margin-top:18px;">Sa anong uri ng iyong trabaho higit na kailangan pang pagbutihin (isulat ang mga rason kung bakit kailangan pang pagbutihin)?</label>
+        <textarea id="eval-improve" placeholder="Isulat ang iyong sagot dito..."></textarea>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(0)">← Bumalik</button>
+          <button class="btn btn-gold" id="submit-btn" onclick="submitForm()">Isumite ang Evaluation ✓</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: SUCCESS -->
+  <div class="step" id="step-2">
+    <div class="card">
+      <div class="success-screen">
+        <div class="success-icon">✓</div>
+        <h2>Salamat sa iyong Evaluation!</h2>
+        <p>Natanggap na ang iyong mga sagot.<br>Ang iyong feedback ay magiging malaking tulong sa pagpapabuti ng aming organisasyon.<br><br>Maaari mo nang isara ang pahina na ito.</p>
+        <div style="margin-top:28px;">
+          <button class="btn btn-secondary" onclick="toggleSummary()">I-print ang Buod</button>
+          <button class="btn btn-primary" style="margin-left:10px;" onclick="resetForm()">Bagong Evaluation</button>
+        </div>
+        <div id="print-summary" style="display:none; text-align:left; margin-top:32px; padding:24px; background:var(--cream); border-radius:8px; font-size:0.85rem; color:var(--gray-700);"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// =====================================================================
+// AYAYAYAY XDDDDDDDDDDDDDDDDD
+// XDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+// =====================================================================
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymTCj_MjdK82rIPKEriqqHW7Vrnczl-4_oRvD6559T0Z9lVvsyYkyKcgSKSXdDE9NN1w/exec";
+
+// Generic questions using {name} placeholder
+const QUESTIONS = {
+  a: [
+    "Gaano ka kasiya sa pagtatrabaho dito?",
+    "Gaano mo kagusto makatrabaho ang mga nagtatrabaho dito?",
+    "Gaano kahusay sa pakikisama at pakikitungo ang mga katrabaho mo sa'yo?",
+    "Gaano ka kahusay sa pakikisama at pakikitungo sa iyong mga katrabaho?",
+    "Bigyan ng puntos ang iyong sarili sa pagiging miyembro ng isang koponan?",
+    "Gaano ka kalawak upang mabigay ng tulong sa nangangailangan?",
+    "Gaano ka kahusay sa paghawak at paggawa ng iyong trabaho kumpara sa iba?",
+    "Gaano ka kahusay sa pagsunod ng mga panuntunan at regulasyon ng kumpanya?",
+    "Anong puntos ang iyong ibibigay sa iyong sarili sa pagiging produktibo?",
+    "Gaano ka kadesidido sa iyong trabaho?",
+    "Anong puntos ang iyong ibibigay sa iyong sarili sa pagiging tapat sa trabaho?",
+    "Gaano ka kahusay sa pagsunod sa pamantayan sa ayos at panlabas na anyo?",
+    "Gaano kalawak ang makakaya ng iyong kaalaman sa paggawa ng iyong trabaho?",
+    "Bigyan ng puntos ang iyong kalidad sa antas ng iyong pagtatrabaho (kagalingan, atensyon sa detalye, katumpakan).",
+  ],
+};
+
+function fillName(template, name) {
+  return template.replace(/\{name\}/g, name);
+}
+
+function buildTable(bodyId, questions, prefix, name) {
+  const tbody = document.getElementById(bodyId);
+  tbody.innerHTML = '';
+  questions.forEach((q, i) => {
+    const rowId = `${prefix}_${i}`;
+    const tr = document.createElement('tr');
+    let radios = '';
+    for (let v = 1; v <= 5; v++) {
+      radios += `<td class="num-col"><div class="radio-group">
+        <input type="radio" name="${rowId}" id="${rowId}_${v}" value="${v}">
+        <label for="${rowId}_${v}">${v}</label>
+      </div></td>`;
+    }
+    tr.innerHTML = `<td>${fillName(q, name)}</td>${radios}`;
+    tbody.appendChild(tr);
+  });
+}
+
+function init() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('eval-date').value = today;
+}
+
+let currentStep = 0;
+
+function goStep(n) {
+  document.querySelectorAll('.step').forEach((s, i) => s.classList.toggle('active', i === n));
+  currentStep = n;
+  updateProgress(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress(n) {
+  const steps = [
+    document.getElementById('ps-1'),
+    document.getElementById('ps-2'),
+    document.getElementById('ps-3'),
+  ];
+  const pct = [0, 50, 100];
+  document.getElementById('progressBar').style.width = pct[n] + '%';
+  steps.forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i < n) s.classList.add('done');
+    else if (i === n) s.classList.add('active');
+  });
+}
+
+function startEval() {
+  let valid = true;
+  const fields = [
+    { id: 'emp-name', wrap: 'f-name' },
+    { id: 'emp-dept', wrap: 'f-dept' },
+    { id: 'emp-pos', wrap: 'f-position' },
+    { id: 'eval-date', wrap: 'f-date' },
+  ];
+  let deptMissing = false;
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    const wrap = document.getElementById(f.wrap);
+    if (!el.value.trim()) {
+      wrap.classList.add('field-error');
+      valid = false;
+      if (f.id === 'emp-dept') deptMissing = true;
+    } else {
+      wrap.classList.remove('field-error');
+    }
+  });
+
+  const notif = document.getElementById('notif-step0');
+  if (!valid) {
+    notif.textContent = deptMissing
+      ? 'Pumili muna ng Department / Location bago magpatuloy.'
+      : 'Pakipunan muna ang lahat ng kinakailangang impormasyon.';
+    notif.style.display = 'block';
+    const firstError = document.querySelector('.field-error');
+    if (firstError && firstError.scrollIntoView) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  notif.style.display = 'none';
+
+  const empName = document.getElementById('emp-name').value.trim();
+
+  // Update card header
+  document.getElementById('eval-card-title').textContent = `Self Evaluation ni ${empName}`;
+  document.getElementById('eval-card-subtitle').textContent = '';
+  document.getElementById('evaluatee-banner').innerHTML =
+    `Ine-evaluate mo ang sarili mo: <strong>${empName}</strong>`;
+
+  // Build the questions table
+  buildTable('sec-a', QUESTIONS.a, 'q_a', empName);
+
+  goStep(1);
+}
+
+function checkAllRated() {
+  const unanswered = [];
+  QUESTIONS.a.forEach((q, i) => {
+    const name = `q_a_${i}`;
+    const row = document.querySelector(`input[name="${name}"]`).closest('tr');
+    if (!document.querySelector(`input[name="${name}"]:checked`)) {
+      unanswered.push(row);
+      row.classList.add('row-unanswered');
+    } else {
+      row.classList.remove('row-unanswered');
+    }
+  });
+  return unanswered;
+}
+
+function submitForm() {
+  const unanswered = checkAllRated();
+  const notif = document.getElementById('notif-step1');
+  if (unanswered.length > 0) {
+    notif.textContent = `May ${unanswered.length} tanong na hindi pa nasasagutan. Pakisagutan ang lahat ng tanong (na-highlight sa ibaba) bago isumite.`;
+    notif.style.display = 'block';
+    if (unanswered[0].scrollIntoView) unanswered[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  notif.style.display = 'none';
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Isinusumite...';
+
+  const payload = collectPayload();
+
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === "PASTE_YOUR_WEB_APP_URL_HERE") {
+    // No backend configured yet — still let them see the summary locally
+    console.warn("Google Sheets URL not configured. Skipping submission.");
+    buildSummary(payload);
+    goStep(2);
+    updateProgress(2);
+    btn.disabled = false;
+    btn.textContent = 'Isumite ang Evaluation ✓';
+    return;
+  }
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' }, // avoids CORS preflight with Apps Script
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
+    buildSummary(payload);
+    goStep(2);
+    updateProgress(2);
+  })
+  .catch((err) => {
+    console.error(err);
+    alert('Paumanhin, may problema sa pag-sumite. Subukan ulit.');
+  })
+  .finally(() => {
+    btn.disabled = false;
+    btn.textContent = 'Isumite ang Evaluation ✓';
+  });
+}
+
+function collectPayload() {
+  const empName = document.getElementById('emp-name').value;
+  const dept = document.getElementById('emp-dept').value;
+  const pos = document.getElementById('emp-pos').value;
+  const date = document.getElementById('eval-date').value;
+  const comments = document.getElementById('eval-comments').value;
+  const bestFit = document.getElementById('eval-best-fit').value;
+  const improve = document.getElementById('eval-improve').value;
+
+  const scores = {};
+  let total = 0, count = 0;
+  QUESTIONS.a.forEach((q, i) => {
+    const checked = document.querySelector(`input[name="q_a_${i}"]:checked`);
+    const val = checked ? parseInt(checked.value) : 0;
+    scores[`a${i + 1}`] = val;
+    total += val; count++;
+  });
+  const average = (total / count).toFixed(2);
+
+  const payload = {
+    empName, empDept: dept, empPos: pos, evalDate: date,
+    average,
+    comments,
+    bestFit,
+    improve
+  };
+  QUESTIONS.a.forEach((q, i) => {
+    payload[`a${i + 1}`] = scores[`a${i + 1}`];
+  });
+  return payload;
+}
+
+function buildSummary(payload) {
+  let html = `<strong>Tagasagot:</strong> ${payload.empName} &nbsp;|&nbsp; <strong>Dept:</strong> ${payload.empDept} &nbsp;|&nbsp; <strong>Posisyon:</strong> ${payload.empPos} &nbsp;|&nbsp; <strong>Petsa:</strong> ${payload.evalDate}`;
+  html += `<br><br>`;
+
+  QUESTIONS.a.forEach((q, i) => {
+    const val = payload[`a${i + 1}`];
+    html += `<br>[${val}] ${fillName(q, payload.empName)}`;
+  });
+  html += `<br><br>`;
+
+  html += `<strong>Kabuuang Average: ${payload.average} / 5.00</strong>`;
+  if (payload.comments) html += `<br><br><em>Komento: ${payload.comments}</em>`;
+  if (payload.bestFit) html += `<br><br><em>Sa anong uri ng trabaho higit na magaling at mahusay: ${payload.bestFit}</em>`;
+  if (payload.improve) html += `<br><br><em>Sa anong uri ng trabaho kailangan pang pagbutihin: ${payload.improve}</em>`;
+
+  document.getElementById('print-summary').innerHTML = html;
+}
+
+function toggleSummary() {
+  const s = document.getElementById('print-summary');
+  s.style.display = s.style.display === 'none' ? 'block' : 'none';
+}
+
+function resetForm() {
+  location.reload();
+}
+
+init();
+</script>
+</body>
+</html>
